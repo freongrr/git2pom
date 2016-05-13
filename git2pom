@@ -1,0 +1,52 @@
+#!/usr/bin/perl
+
+use strict;
+
+use Cwd qw(abs_path);
+use File::Basename qw(dirname basename);
+use lib dirname(abs_path($0));
+
+use Git::Commands;
+
+my $scriptName = basename($0);
+
+sub reportError {
+  my $error = shift;
+
+  if ($error =~ /Can't locate object method "([^"]+)" via package "Git::Commands"/) {
+    $error = "invalid command '$1'";
+    printUsage();
+  }
+
+  $error =~ s/ at .*? line \d+\.$/\./;
+  print STDERR "$scriptName: $error\n";
+}
+
+sub printUsage {
+  print STDERR "usage: $scriptName [--help] <command> [<args>]\n";
+  print STDERR "\n";
+  print STDERR "Available commands are:\n";
+  print STDERR "\n";
+  print STDERR "   clone   Create a new project by cloning one or more repositories.\n";
+  print STDERR "   info    Display information on the current project.\n";
+  print STDERR "   add     Clone a repository into an existing project.\n";
+  print STDERR "   remove  Remove one or more modules from the project (keep the files).\n";
+  print STDERR "\n";
+}
+
+eval {
+  if (@ARGV == 0) {
+    printUsage();
+    die "missing command";
+  }
+
+  my $command = shift @ARGV;
+  Git::Commands->$command();
+
+  exit 0;
+};
+if ($@) {
+  reportError($@);
+  exit 1;
+}
+
