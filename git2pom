@@ -18,7 +18,7 @@ sub reportError {
     printUsage();
   }
 
-  $error =~ s/ at .*? line \d+\.$/\./;
+  $error =~ s/ at .*? line \d+\.$//;
   print STDERR "$scriptName: $error\n";
 }
 

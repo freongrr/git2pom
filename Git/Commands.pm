@@ -64,8 +64,8 @@ sub clone {
 sub _clone {
   my ($repository, $base, $branch) = @_;
 
-  if (%ENV{'GIT_SERVER'}) {
-    $repository = %ENV{GIT_SERVER}.'/'.$repository
+  if ($ENV{'GIT_SERVER'}) {
+    $repository = $ENV{GIT_SERVER}.'/'.$repository
   }
 
   print colored("Branching $base from $repository...\n", "green bold");
